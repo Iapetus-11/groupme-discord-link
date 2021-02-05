@@ -4,7 +4,7 @@ import atexit
 import time
 import os
 
-os.chdir(os.path.dirname(__file__))  # ensure current working directory is correct
+os.chdir(os.path.join('.', os.path.dirname(__file__)))  # ensure current working directory is correct
 
 try:
     with open("config.json", "r") as f:
