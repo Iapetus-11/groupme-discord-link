@@ -14,50 +14,50 @@ except FileNotFoundError:
     exit(1)
 
 try:
-    with open("last_message.txt", "r") as f:
-        last_message_id = f.readline()
+    with open("last_msg.txt", "r") as f:
+        last_msg_id = f.readline()
 except FileNotFoundError:
-    last_message_id = "10"
+    last_msg_id = "10"
 
 
 def exit_handler():
-    with open("last_message.txt", "w") as f:
-        f.write(last_message_id)
+    with open("last_msg.txt", "w") as f:
+        f.write(last_msg_id)
 
 
 atexit.register(exit_handler)
 
 while True:
     res = requests.get(
-        f"https://api.groupme.com/v3/groups/{config.group_id}/messages",
-        params={"since_id": last_message_id, "token": config.groupme_token, "limit": 10},
+        f"https://api.groupme.com/v3/groups/{config.group_id}/msgs",
+        params={"since_id": last_msg_id, "token": config.groupme_token, "limit": 10},
     )
 
     if res.status_code == 200:
         jj = cj.classify(res.json())
 
-        for i, message in enumerate(reversed(jj.response.messages)):
-            content = message.text
+        for i, msg in enumerate(reversed(jj.response.msgs)):
+            content = msg.text
 
             res = requests.post(
                 config.webhook,
                 data={
-                    "username": message.name,
-                    "avatar_url": message.avatar_url,
-                    "content": message.text + "\n".join(a.url for a in message.attachments if a.type == "image" and isinstance(a.url, str))
-                    # "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
+                    "username": msg.name,
+                    "avatar_url": msg.avatar_url,
+                    "content": (msg.text if msg.text else "​") + "\n".join(a.url for a in msg.attachments if a.type == "image")
+                    # "embeds": [{"image": {"url": a.url}} for a in msg.attachments if a.type == "image"],
                 },
             )
 
             if res.status_code == 429:
-                res.messages.insert(i + 1, message)  # retry after sleeping
+                res.msgs.insert(i + 1, msg)  # retry after sleeping
                 time.sleep(2)
             elif res.status_code not in (200, 204):
                 print(f"Uh oh, something went wrong while executing the Discord webhook... {res.status_code} {res.text}")
             else:
                 time.sleep(0.5)  # avoid spamming the webhook
 
-        last_message_id = jj.response.messages[0].id
+        last_msg_id = jj.response.msgs[0].id
     elif res.status_code == 304:
         time.sleep(5)
     else:
