@@ -28,11 +28,9 @@ def exit_handler():
 atexit.register(exit_handler)
 
 while True:
-    print("e")
-
     res = requests.get(
         f"https://api.groupme.com/v3/groups/{config.group_id}/messages",
-        params={"since_id": last_message_id, "token": config.groupme_token},
+        params={"since_id": last_message_id, "token": config.groupme_token, "limit": 10},
     )
 
     jj = cj.classify(res.json())
@@ -50,10 +48,12 @@ while True:
             )
 
             if res.status_code == 429:
-                response.messages.insert(i+1, message)  # retry after sleeping
+                res.messages.insert(i+1, message)  # retry after sleeping
                 time.sleep(2)
-            if res.status_code not in (200, 204):
+            elif res.status_code not in (200, 204):
                 print(f"Uh oh, something went wrong while executing the Discord webhook... {res.status_code} {res.text}")
+            else:
+                time.sleep(.5)  # avoid spamming the webhook
     else:
         print(f"Oh no! Response wasn't okily dokily... {res.status_code} {jj}")
 
