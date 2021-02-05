@@ -35,15 +35,18 @@ while True:
 
     jj = cj.classify(res.json())
 
-    for message in jj.get("messages", []):
-        requests.post(
-            config.webhook,
-            data={
-                "username": message.name,
-                "avatar_url": message.avatar_url,
-                "content": message.text,
-                "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
-            },
-        )
+    if res.status_code == 200:
+        for message in jj.get("messages", []):
+            requests.post(
+                config.webhook,
+                data={
+                    "username": message.name,
+                    "avatar_url": message.avatar_url,
+                    "content": message.text,
+                    "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
+                },
+            )
+    else:
+        print(f"Oh no! Response wasn't okily dokily... {jj}")
 
     time.sleep(5)
