@@ -30,7 +30,7 @@ atexit.register(exit_handler)
 while True:
     res = requests.get(
         f"https://api.groupme.com/v3/groups/{config.group_id}/messages",
-        params={"since_id": last_message_id},
+        params={"since_id": last_message_id, "token": config.groupme_token},
     )
 
     jj = cj.classify(res.json())
