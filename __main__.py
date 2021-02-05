@@ -56,8 +56,8 @@ while True:
                 time.sleep(.5)  # avoid spamming the webhook
 
         last_message_id = jj.response.messages[0].id
-    elif res.status_code == 204:
-        pass
+    elif res.status_code == 304:
+        time.sleep(5)
     else:
         print(f"Oh no! Response wasn't okily dokily... {res.status_code}")
 
