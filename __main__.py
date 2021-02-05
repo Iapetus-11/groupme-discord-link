@@ -36,7 +36,7 @@ while True:
     if res.status_code == 200:
         jj = cj.classify(res.json())
 
-        for i, msg in enumerate(reversed(jj.response.msgs)):
+        for i, msg in enumerate(reversed(jj.response.messages)):
             content = msg.text
 
             res = requests.post(
