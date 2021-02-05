@@ -29,7 +29,7 @@ atexit.register(exit_handler)
 
 while True:
     res = requests.get(
-        f"http://api.groupme.com/v3/groups/{config.group_id}/msgs",
+        f"https://api.groupme.com/v3/groups/{config.group_id}/messages",
         params={"since_id": last_msg_id, "token": config.groupme_token, "limit": 10},
     )
 
@@ -61,7 +61,7 @@ while True:
     elif res.status_code == 304:
         time.sleep(5)
     else:
-        print(f"Oh no! Response wasn't okily dokily... {res.status_code}")
+        print(f"Oh no! Response wasn't okily dokily... {res.status_code} {res.text}")
         time.sleep(5)
 
     time.sleep(5)
