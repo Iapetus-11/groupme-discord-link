@@ -32,6 +32,13 @@ while True:
 
     jj = cj.classify(res.json())
 
-    if jj.count > 0:
-        for message in jj.messages:
-            pass
+    for message in jj.messages:
+        requests.post(
+            config.webhook,
+            data={
+                "username": message.name,
+                "avatar_url": message.avatar_url,
+                "content": message.text,
+                "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
+            },
+        )
