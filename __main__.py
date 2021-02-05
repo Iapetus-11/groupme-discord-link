@@ -48,12 +48,12 @@ while True:
             )
 
             if res.status_code == 429:
-                res.messages.insert(i+1, message)  # retry after sleeping
+                res.messages.insert(i + 1, message)  # retry after sleeping
                 time.sleep(2)
             elif res.status_code not in (200, 204):
                 print(f"Uh oh, something went wrong while executing the Discord webhook... {res.status_code} {res.text}")
             else:
-                time.sleep(.5)  # avoid spamming the webhook
+                time.sleep(0.5)  # avoid spamming the webhook
 
         last_message_id = jj.response.messages[0].id
     elif res.status_code == 304:
