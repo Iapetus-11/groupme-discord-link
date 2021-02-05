@@ -57,7 +57,7 @@ while True:
             else:
                 time.sleep(0.5)  # avoid spamming the webhook
 
-        last_msg_id = jj.response.msgs[0].id
+        last_msg_id = jj.response.messages[0].id
     elif res.status_code == 304:
         time.sleep(5)
     else:
