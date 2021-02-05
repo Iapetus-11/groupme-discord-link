@@ -36,7 +36,7 @@ while True:
     jj = cj.classify(res.json())
 
     if res.status_code == 200:
-        for i, message in enumerate(jj.response.messages):
+        for i, message in enumerate(reversed(jj.response.messages)):
             res = requests.post(
                 config.webhook,
                 data={
