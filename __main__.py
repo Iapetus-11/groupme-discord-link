@@ -45,3 +45,5 @@ while True:
                 "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
             },
         )
+
+    time.sleep(5)
