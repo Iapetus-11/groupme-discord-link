@@ -2,6 +2,9 @@ import classyjson as cj
 import requests
 import atexit
 import time
+import os
+
+os.chdir(os.path.dirname(__file__))  # ensure current working directory is correct
 
 try:
     with open("config.json", "r") as f:
@@ -32,7 +35,7 @@ while True:
 
     jj = cj.classify(res.json())
 
-    for message in jj.messages:
+    for message in jj.get("messages", []):
         requests.post(
             config.webhook,
             data={
