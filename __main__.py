@@ -57,4 +57,6 @@ while True:
     else:
         print(f"Oh no! Response wasn't okily dokily... {res.status_code} {jj}")
 
+    last_message_id = jj.response.messages[0].id
+
     time.sleep(5)
