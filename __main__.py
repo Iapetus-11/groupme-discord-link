@@ -14,14 +14,14 @@ except FileNotFoundError:
     exit(1)
 
 try:
-    with open("last_msg.txt", "r") as f:
+    with open("last_message.txt", "r") as f:
         last_msg_id = f.readline()
 except FileNotFoundError:
     last_msg_id = "10"
 
 
 def exit_handler():
-    with open("last_msg.txt", "w") as f:
+    with open("last_message.txt", "w") as f:
         f.write(last_msg_id)
 
 
@@ -29,7 +29,7 @@ atexit.register(exit_handler)
 
 while True:
     res = requests.get(
-        f"https://api.groupme.com/v3/groups/{config.group_id}/msgs",
+        f"http://api.groupme.com/v3/groups/{config.group_id}/msgs",
         params={"since_id": last_msg_id, "token": config.groupme_token, "limit": 10},
     )
 
