@@ -33,17 +33,17 @@ while True:
         params={"since_id": last_message_id, "token": config.groupme_token, "limit": 10},
     )
 
-    jj = cj.classify(res.json())
-
     if res.status_code == 200:
+        jj = cj.classify(res.json())
+
         for i, message in enumerate(reversed(jj.response.messages)):
             res = requests.post(
                 config.webhook,
                 data={
                     "username": message.name,
                     "avatar_url": message.avatar_url,
-                    "content": message.text,
-                    "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
+                    "content": message.text + "\n".join(a.url for a in message.attachments if a.type == "image")
+                    # "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
                 },
             )
 
@@ -54,9 +54,11 @@ while True:
                 print(f"Uh oh, something went wrong while executing the Discord webhook... {res.status_code} {res.text}")
             else:
                 time.sleep(.5)  # avoid spamming the webhook
-    else:
-        print(f"Oh no! Response wasn't okily dokily... {res.status_code} {jj}")
 
-    last_message_id = jj.response.messages[0].id
+        last_message_id = jj.response.messages[0].id
+    elif res.status_code == 204:
+        pass
+    else:
+        print(f"Oh no! Response wasn't okily dokily... {res.status_code}")
 
     time.sleep(5)
