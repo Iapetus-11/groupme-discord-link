@@ -17,7 +17,7 @@ try:
     with open("last_message.txt", "r") as f:
         last_message_id = f.readline()
 except FileNotFoundError:
-    last_message_id = "-1"
+    last_message_id = "10"
 
 
 def exit_handler():
@@ -28,6 +28,8 @@ def exit_handler():
 atexit.register(exit_handler)
 
 while True:
+    print("e")
+
     res = requests.get(
         f"https://api.groupme.com/v3/groups/{config.group_id}/messages",
         params={"since_id": last_message_id, "token": config.groupme_token},
@@ -36,8 +38,8 @@ while True:
     jj = cj.classify(res.json())
 
     if res.status_code == 200:
-        for message in jj.get("messages", []):
-            requests.post(
+        for i, message in enumerate(jj.response.messages):
+            res = requests.post(
                 config.webhook,
                 data={
                     "username": message.name,
@@ -46,7 +48,13 @@ while True:
                     "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
                 },
             )
+
+            if res.status_code == 429:
+                response.messages.insert(i+1, message)  # retry after sleeping
+                time.sleep(2)
+            if res.status_code not in (200, 204):
+                print(f"Uh oh, something went wrong while executing the Discord webhook... {res.status_code} {res.text}")
     else:
-        print(f"Oh no! Response wasn't okily dokily... {jj}")
+        print(f"Oh no! Response wasn't okily dokily... {res.status_code} {jj}")
 
     time.sleep(5)
