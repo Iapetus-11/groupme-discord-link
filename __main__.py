@@ -37,12 +37,14 @@ while True:
         jj = cj.classify(res.json())
 
         for i, message in enumerate(reversed(jj.response.messages)):
+            content = message.text
+
             res = requests.post(
                 config.webhook,
                 data={
                     "username": message.name,
                     "avatar_url": message.avatar_url,
-                    "content": message.text + "\n".join(a.url for a in message.attachments if a.type == "image")
+                    "content": message.text + "\n".join(a.url for a in message.attachments if a.type == "image" and isinstance(a.url, str))
                     # "embeds": [{"image": {"url": a.url}} for a in message.attachments if a.type == "image"],
                 },
             )
