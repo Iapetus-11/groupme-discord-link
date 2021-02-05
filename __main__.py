@@ -62,5 +62,6 @@ while True:
         time.sleep(5)
     else:
         print(f"Oh no! Response wasn't okily dokily... {res.status_code}")
+        time.sleep(5)
 
     time.sleep(5)
